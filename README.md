@@ -1,12 +1,11 @@
 # trace_gen
 Trace Generation for Memory and Front-end simulation.
 Instruction/Memory Trace Generation Tool
- 
 This tool collects an trace of instructions that access memory by filling a buffer.  When the buffer overflows,the callback writes all of the collected records to a file.
 
 Traces include the instruction address (in hex) and any of the below qualifiers if they so apply:
- * R <hex-addr>: this instruction includes a memory location as a source operand; is followed by load address
- * W <hex-addr>: this instruction includes a memory location as a destination operand; is followed by store address.
+ * R \<hex-addr\>: this instruction includes a memory location as a source operand; is followed by load address
+ * W \<hex-addr\>: this instruction includes a memory location as a destination operand; is followed by store address.
  * T: this instruction is a branch that in this instance was evaluated as Taken
  * N: this instruction is a branch that in this instance was evaluated as Not Taken
  * J: this instruction is an unconditional Jump
@@ -14,6 +13,8 @@ Traces include the instruction address (in hex) and any of the below qualifiers 
  * E: this instruction is a Return
  * C: this instruction is a cache invalidate instruction
  * P: this instruction is a TLB invalidate instruction
+
+With just the above information, one can simulate the flow of instructions through a processor while accurately simulating cache activity and latency. It provides all the information necessary for a Runahead Prefetch simulation. Namely control flow changes, and all memory requests, both instruction and data.
 
 Below is an example snippet of trace that would be generated with this tool:
 ```
@@ -38,3 +39,18 @@ Below is an example snippet of trace that would be generated with this tool:
 7fa133ea0aad N
 7fa133ea0ab3 R 7fa10ddf69e8
 ```
+
+# Dependencies
+This PinTool requires an installation of the Pin binary instrumentation program. This can be found [here](https://software.intel.com/en-us/articles/pintool-downloads).
+* Note: this PinTool had only be tested on a linux distribution of Pin v3.0.
+
+# Install
+* Navigate to Pin's root directory and cd into source/tools
+* clone this repo
+* navigate into the repo directory and execute:
+```
+make obj-intel64/trace_gen.cpp
+```
+
+# Run
+
