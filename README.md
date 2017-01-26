@@ -49,7 +49,7 @@ This PinTool requires an installation of the Pin binary instrumentation program.
 * clone this repo
 * navigate into the repo directory and execute:
 ```
-make obj-intel64/trace_gen.cpp
+make obj-intel64/trace_gen.so
 ```
 
 # Run
