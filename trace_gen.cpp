@@ -81,13 +81,8 @@ END_LEGAL */
 
 #include <sys/time.h>
 #include <iomanip>
-//#include <sys/io.h>
 
 #include <zlib.h>
-
-//comppresion boost files
-//#include <boost/iostreams/filter/gzip.hpp>
-//"gzip.hpp"
 
 #include "pin.H"
 #include "portability.H"
@@ -107,10 +102,6 @@ KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool", "o", "insbuffer.out"
  * Emit the address trace to the output file
  */
 KNOB<BOOL> KnobEmitTrace(KNOB_MODE_WRITEONCE, "pintool", "emit", "0", "emit a trace in the output file");
-
-//KNOB<UINT64> KnobStartInstruction(KNOB_MODE_WRITEONCE, "pintool", "start_ins", "0", "start instruction for trace generation");
-
-//KNOB<UINT64> KnobStopInstruction(KNOB_MODE_WRITEONCE, "pintool", "stop_ins", "0", "stop instruction for trace generation");
 
 KNOB<BOOL> KnobSMARTS(KNOB_MODE_WRITEONCE, "pintool", "smarts", "0", "do SMARTS interval tracing");
 
@@ -162,13 +153,8 @@ class MLOG
     void IncNumIns(UINT64 numElements);
     void OpenFile(void);
 
-    //UINT64 start_ins;
-    //UINT64 stop_ins;
-    //bool tracing;
-
   private:
     ofstream _ofile;
-    //ADDRINT prev_pc;
     UINT64 num_ins;
     bool SMARTS;
     UINT64 warmup_ins;
@@ -203,22 +189,7 @@ MLOG::MLOG(THREADID tid)
 {
     if (KnobEmitTrace && tid == 24)
     {
-       // string filename = KnobOutputFile.Value() + "." + decstr(getpid_portable()) + "." + decstr(tid);
-
-       // _ofile.open(filename.c_str());
-
-       // if ( ! _ofile )
-       // {
-       //     cerr << "Error: could not open output file. " << filename << endl;
-       //     exit(1);
-       // }
-       // 
-       // _ofile << hex;
-
-        //prev_pc = 0x0;
-        //start_ins = KnobStartInstruction.Value() - 1;
-        //stop_ins = KnobStopInstruction.Value() - 1;
-        
+            
         num_ins = 0;
         SMARTS = KnobSMARTS;
         warmup_ins = KnobWarmupIns.Value();
@@ -228,8 +199,6 @@ MLOG::MLOG(THREADID tid)
         SetBufferTime();
         tracing = false;
         this->tid = tid;
-        //fd = open("test.txt", O_WRONLY);
-        //zip_file = gzdopen (fd, "wb");
         zip_file = gzopen ("test.txt", "wb");
     }
 }
@@ -240,35 +209,13 @@ MLOG::~MLOG()
     if (KnobEmitTrace)
     {
         _ofile.close();
-        //gzclose(zip_file);
     }
 }
 
 
 VOID MLOG::DumpBufferToFile( struct MEMREF * reference, UINT64 numElements, THREADID tid )
 {
-    //if (!tracing) {
-    //  struct timeval tv1;
-    //  struct timezone tz1;
-    //  gettimeofday(&tv1, &tz1);
-    //  _ofile << "time: " << dec << tv1.tv_sec << "." << setw(6) << tv1.tv_usec << hex << endl;
-    //  //fprintf (_ofile, "%ld.%06ld\n", tv1.tv_sec, tv1.tv_usec); 
-    //  tracing = true;
-    //}
-
-    //_ofile << "num elements: " << dec << numElements << hex << endl;
-    //int res = gzwrite(zip_file, reference, (numElements * sizeof(struct MEMREF)));
-    //gzprintf (zip_file, "hi\n");
-
-    //if (res != 0) {
-    //  _ofile << "error" << endl;
-    //}
-
-
-
-                
-
-
+   
     for(UINT64 i=0; i<numElements; i++, reference++)
     {
         _ofile << reference->pc;
@@ -282,17 +229,6 @@ VOID MLOG::DumpBufferToFile( struct MEMREF * reference, UINT64 numElements, THRE
             _ofile << " R " << reference->ea1;
         _ofile << endl;
 
-    //num_ins += numElements;
-    
-//if (reference->pc != prev_pc)
-//            _ofile << endl;
-//        if (reference->ev == 'R' || reference->ev == 'W')
-//            _ofile << " " << reference->ev << " " << reference->ea;
-//        else if (reference->ev != 0)
-//            _ofile << reference->pc << " " << reference->ev;
-//        else
-//            _ofile << reference->pc;
-//        prev_pc = reference->pc;
     }
 }
 
@@ -470,32 +406,6 @@ VOID Trace(TRACE trace, VOID *v)
                                      IARG_END);
 
             }
-            //if(INS_IsMemoryRead(ins) && INS_IsStandardMemop(ins))
-            //{
-            //    INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
-            //                         IARG_INST_PTR, offsetof(struct MEMREF, pc),
-            //                         IARG_MEMORYREAD_EA, offsetof(struct MEMREF, ea),
-            //                         IARG_UINT32, 'R', offsetof(struct MEMREF, ev),
-            //                         IARG_END);
-            //}
-
-            //if (INS_HasMemoryRead2(ins) && INS_IsStandardMemop(ins))
-            //{
-            //    INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
-            //                         IARG_INST_PTR, offsetof(struct MEMREF, pc),
-            //                         IARG_MEMORYREAD2_EA, offsetof(struct MEMREF, ea),
-            //                         IARG_UINT32, 'R', offsetof(struct MEMREF, ev),
-            //                         IARG_END);
-            //}
-
-            //if(INS_IsMemoryWrite(ins) && INS_IsStandardMemop(ins))
-            //{
-            //    INS_InsertFillBuffer(ins, IPOINT_BEFORE, bufId,
-            //                         IARG_INST_PTR, offsetof(struct MEMREF, pc),
-            //                         IARG_MEMORYWRITE_EA, offsetof(struct MEMREF, ea),
-            //                         IARG_UINT32, 'W', offsetof(struct MEMREF, ev),
-            //                         IARG_END);
-            //}
         }
     }
 }
@@ -521,39 +431,12 @@ VOID Trace(TRACE trace, VOID *v)
 VOID * BufferFull(BUFFER_ID id, THREADID tid, const CONTEXT *ctxt, VOID *buf,
                   UINT64 numElements, VOID *v)
 {
-    //UINT64 next_num_instructions = 0;
-
     if ( (! KnobEmitTrace) || (tid != 24) )
         return buf;
 
     struct MEMREF * reference=(struct MEMREF*)buf;
 
     MLOG * mlog = static_cast<MLOG*>( PIN_GetThreadData( mlog_key, tid ) );
-
-
-    //if (mlog->stop_ins > mlog->start_ins) {
-    //    next_num_instructions = mlog->num_instructions + numElements;
-    //    
-    //    if (mlog->start_ins > mlog->num_instructions && mlog->start_ins < next_num_instructions)
-    //    {
-    //      reference += (mlog->start_ins - mlog->num_instructions);// * sizeof(struct MEMREF);
-    //      numElements -= mlog->start_ins - mlog->num_instructions;
-    //    }
-    //    if (mlog->stop_ins > mlog->num_instructions && mlog->stop_ins < next_num_instructions)
-    //      numElements -= next_num_instructions - mlog->stop_ins;
-
-    //    if (!(mlog->num_instructions > mlog->stop_ins || next_num_instructions < mlog->start_ins)) {
-    //        
-    //      mlog->DumpBufferToFile(reference, numElements, tid);
-    //    } else {
-    //        mlog->tracing = false;
-    //    }
-
-    //    mlog->num_instructions = next_num_instructions;
-    //} else {
-
-    //  mlog->DumpBufferToFile( reference, numElements, tid );
-    //}
 
     if (mlog->EmitBuffer())
         mlog->DumpBufferToFile( reference, numElements, tid );
