@@ -49,8 +49,20 @@ This PinTool requires an installation of the Pin binary instrumentation program.
 * clone this repo
 * navigate into the repo directory and execute:
 ```
+mkdir obj-intel64
 make obj-intel64/trace_gen.so
 ```
 
 # Run
-
+From the pintool's root directory execute the following:
+```
+../../../pin -t obj-intel64/trace_gen.so -emit 1 -smarts 1 -warmup_ins <number_of_warmup_instructions> -ins_interval <instruction_interval> -num_intervals <number of intervals> -snippet_size <number_of_instructions_per_snippet> -- <command line for program under test>
+```
+Below is an explanation of the available command line options:
+* -o: file in which the trace is dumped (default: trace_gen.out)
+* -emit: enables logging the trace in a trace (default: false)
+* -smarts: enables special smarts based tracing (default: false). Without smarts based tracing, the entire program is logged. smarts tracing works in conjunction with the below command line options:
+ * -warmup_ins: number of instructions to ignore before beginning the trace
+ * -ins_interval: number of instructions between the start of each SMART snippet
+ * -num_intervals: number of SMART snippets to log.
+ * -snippet_size: number of instructions to log per SMART snippet
