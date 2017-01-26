@@ -49,14 +49,14 @@ This PinTool requires an installation of the Pin binary instrumentation program.
 * clone this repo
 * navigate into the repo directory and execute:
 ```
-mkdir obj-intel64
-make obj-intel64/trace_gen.so
+$ mkdir obj-intel64
+$ make obj-intel64/trace_gen.so
 ```
 
 # Run
 From the pintool's root directory execute the following:
 ```
-../../../pin -t obj-intel64/trace_gen.so -emit 1 -smarts 1 -warmup_ins <number_of_warmup_instructions> -ins_interval <instruction_interval> -num_intervals <number of intervals> -snippet_size <number_of_instructions_per_snippet> -- <command line for program under test>
+$ ../../../pin -t obj-intel64/trace_gen.so -emit 1 -smarts 1 -warmup_ins <number_of_warmup_instructions> -ins_interval <instruction_interval> -num_intervals <number of intervals> -snippet_size <number_of_instructions_per_snippet> -- <command line for program under test>
 ```
 Below is an explanation of the available command line options:
 * -o: file in which the trace is dumped (default: trace_gen.out)
