@@ -82,8 +82,6 @@ END_LEGAL */
 #include <sys/time.h>
 #include <iomanip>
 
-#include <zlib.h>
-
 #include "pin.H"
 #include "portability.H"
 using namespace std;
@@ -96,7 +94,7 @@ using namespace std;
 /*
  * Name of the output file
  */
-KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool", "o", "insbuffer.out", "output file");
+KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE, "pintool", "o", "trace_gen.out", "output file");
 
 /*
  * Emit the address trace to the output file
@@ -163,7 +161,6 @@ class MLOG
     UINT64 snippet_size;
     struct timeval buffer_tv;  
     bool tracing; 
-    gzFile zip_file;
     int fd;
     THREADID tid;
 };
@@ -199,7 +196,6 @@ MLOG::MLOG(THREADID tid)
         SetBufferTime();
         tracing = false;
         this->tid = tid;
-        zip_file = gzopen ("test.txt", "wb");
     }
 }
 
